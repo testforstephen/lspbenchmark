@@ -30,7 +30,7 @@ public final class BenchmarkMain {
             buffer.append(content);
         }
 
-        String content = "{\"jsonrpc\":\"2.0\",\"id\":11,\"method\":\"exit\"}\r\n";
+        String content = "{\"jsonrpc\":\"2.0\",\"id\":" + (OCCURENCE + 1) + ",\"method\":\"exit\"}\r\n";
         buffer.append("Content-Length:");
         buffer.append(content.getBytes().length);
         buffer.append("\r\n\r\n");
