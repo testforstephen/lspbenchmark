@@ -3,7 +3,7 @@ This project is a benchmark for measuring the performance overhead of the lsp4j 
 To run the benchmark, follow these steps:
 
 - Clone this repository and open it in VS Code.
-- Run BenchmarkMain as the main application. You will see the completion time in the output.
+- Run `BenchmarkMain` as the main application. You will see the completion time in the output.
 ```
 Total completion request: 10
 Total time: 373ms
