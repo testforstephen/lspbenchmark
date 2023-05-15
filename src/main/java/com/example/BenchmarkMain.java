@@ -21,27 +21,12 @@ public final class BenchmarkMain {
     }
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        StringBuffer buffer = new StringBuffer();
-        for (int i = 1; i <= OCCURENCE; i++) {
-            String content = "{\"jsonrpc\":\"2.0\",\"id\":" + i + ",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"uri\"},\"position\":{\"line\":0,\"character\":0},\"context\": {\"triggerKind\": 1}}}\r\n";
-            buffer.append("Content-Length:");
-            buffer.append(content.getBytes().length);
-            buffer.append("\r\n\r\n");
-            buffer.append(content);
-        }
-
-        String content = "{\"jsonrpc\":\"2.0\",\"id\":" + (OCCURENCE + 1) + ",\"method\":\"exit\"}\r\n";
-        buffer.append("Content-Length:");
-        buffer.append(content.getBytes().length);
-        buffer.append("\r\n\r\n");
-        buffer.append(content);
-
-        InputStream inputStream = new ByteArrayInputStream(buffer.toString().getBytes(StandardCharsets.UTF_8.name()));
+        String lspRequests = buildLSPRequests();
+        InputStream inputStream = new ByteArrayInputStream(lspRequests.getBytes(StandardCharsets.UTF_8.name()));
         OutputStream outputStream = new ByteArrayOutputStream();
         Function<MessageConsumer, MessageConsumer> wrapper = it -> it;
         Launcher<LanguageClient> launcher = Launcher.createLauncher(new JavaLanguageServer(), LanguageClient.class, inputStream, outputStream, Executors.newCachedThreadPool(), wrapper);
         launcher.startListening();
-        startAt = System.currentTimeMillis();
 
         while (true) {
             // Sleep for a period of time to avoid consuming too much CPU
@@ -51,6 +36,39 @@ public final class BenchmarkMain {
                 // Ignore
             }
         }
+    }
+
+    private static String buildLSPRequests() {
+        StringBuffer buffer = new StringBuffer();
+        int id = 1;
+        // Build initialize request
+        String init = "{\"jsonrpc\":\"2.0\",\"id\":" + (id++) + ",\"method\":\"initialize\",\"params\":{}}\r\n";
+        buffer.append("Content-Length:");
+        buffer.append(init.getBytes().length);
+        buffer.append("\r\n\r\n");
+        buffer.append(init);
+
+        // Build completion requests
+        for (int i = 1; i <= OCCURENCE; i++) {
+            String completion = "{\"jsonrpc\":\"2.0\",\"id\":" + (id++) + ",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"uri\"},\"position\":{\"line\":0,\"character\":0},\"context\": {\"triggerKind\": 1}}}\r\n";
+            buffer.append("Content-Length:");
+            buffer.append(completion.getBytes().length);
+            buffer.append("\r\n\r\n");
+            buffer.append(completion);
+        }
+
+        // Build exit request
+        String exit = "{\"jsonrpc\":\"2.0\",\"id\":" + (id++) + ",\"method\":\"exit\"}\r\n";
+        buffer.append("Content-Length:");
+        buffer.append(exit.getBytes().length);
+        buffer.append("\r\n\r\n");
+        buffer.append(exit);
+
+        return buffer.toString();
+    }
+
+    public static void initialize() {
+        startAt = System.currentTimeMillis();
     }
 
     public static void exit() {

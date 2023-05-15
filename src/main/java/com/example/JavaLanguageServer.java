@@ -42,7 +42,8 @@ public class JavaLanguageServer implements LanguageServer, TextDocumentService, 
 
     @Override
     public CompletableFuture<InitializeResult> initialize(InitializeParams params) {
-        throw new UnsupportedOperationException("Unimplemented method 'initialize'");
+        BenchmarkMain.initialize();
+        return CompletableFuture.completedFuture(new InitializeResult());
     }
 
     @Override
