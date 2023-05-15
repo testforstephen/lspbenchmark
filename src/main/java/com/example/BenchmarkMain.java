@@ -46,7 +46,7 @@ public final class BenchmarkMain {
         while (true) {
             // Sleep for a period of time to avoid consuming too much CPU
             try {
-                Thread.sleep(1000);
+                Thread.sleep(1000000);
             } catch (InterruptedException e) {
                 // Ignore
             }
